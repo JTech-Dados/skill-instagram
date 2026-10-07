@@ -1,0 +1,6 @@
+.env
+perfis/*/.env
+__pycache__/
+*.pyc
+# comentários contêm dados de terceiros (usernames, textos) — não versionar
+comentarios/**/*.json

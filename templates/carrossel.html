@@ -1,0 +1,118 @@
+<!doctype html>
+<!--
+  Template de slide do carrossel (1080x1350). Renderizado por scripts/render_carrossel.py,
+  que injeta window.SLIDE e window.TEMA e tira um screenshot por slide.
+
+  Formato de slides.json (na pasta da peça):
+  {
+    "conta": "@usuario",
+    "tema": {                      // copie de perfis/<perfil>/perfil.md > Identidade visual
+      "primaria": "#FF5A36", "fundo": "#FFF8F0", "texto": "#1B1B1B",
+      "fonte_titulo": "Archivo Black", "fonte_corpo": "Inter"
+    },
+    "slides": [
+      {"tipo": "capa",  "titulo": "...", "apoio": "..."},
+      {"tipo": "corpo", "numero": "1", "titulo": "...", "texto": "..."},
+      {"tipo": "cta",   "titulo": "...", "texto": "..."}
+    ]
+  }
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --primaria: #FF5A36;
+    --fundo: #FFF8F0;
+    --texto: #1B1B1B;
+    --fonte-titulo: "Archivo Black", system-ui, sans-serif;
+    --fonte-corpo: "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1350px; }
+  body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: var(--fonte-corpo);
+    padding: 110px 96px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .numero {
+    font-family: var(--fonte-titulo);
+    font-size: 150px;
+    line-height: 1;
+    color: var(--primaria);
+    margin-bottom: 32px;
+  }
+  h1 {
+    font-family: var(--fonte-titulo);
+    font-size: 76px;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+  }
+  .capa h1 { font-size: 104px; margin-top: auto; }
+  .capa .apoio { margin-bottom: auto; }
+  .apoio, .texto {
+    font-size: 42px;
+    line-height: 1.4;
+    margin-top: 40px;
+    white-space: pre-line;
+  }
+  .cta { justify-content: center; text-align: center; }
+  .cta h1 { color: var(--primaria); }
+  .rodape {
+    position: absolute;
+    left: 96px; right: 96px; bottom: 56px;
+    display: flex; justify-content: space-between;
+    font-size: 28px; opacity: .65;
+  }
+  .barra {
+    position: absolute; left: 0; top: 0; height: 14px;
+    background: var(--primaria);
+  }
+</style>
+</head>
+<body>
+<div class="barra" id="barra"></div>
+<div class="rodape"><span id="conta"></span><span id="pagina"></span></div>
+<script>
+(() => {
+  const s = window.SLIDE, t = window.TEMA || {}, meta = window.META;
+  const raiz = document.documentElement.style;
+  if (t.primaria) raiz.setProperty("--primaria", t.primaria);
+  if (t.fundo) raiz.setProperty("--fundo", t.fundo);
+  if (t.texto) raiz.setProperty("--texto", t.texto);
+  const fontes = [t.fonte_titulo, t.fonte_corpo].filter(Boolean);
+  if (t.fonte_titulo) raiz.setProperty("--fonte-titulo", `"${t.fonte_titulo}", system-ui, sans-serif`);
+  if (t.fonte_corpo) raiz.setProperty("--fonte-corpo", `"${t.fonte_corpo}", system-ui, sans-serif`);
+  if (fontes.length) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?" +
+      fontes.map(f => "family=" + encodeURIComponent(f) + ":wght@400;700;900").join("&") + "&display=swap";
+    document.head.appendChild(link);
+  }
+
+  document.body.classList.add(s.tipo || "corpo");
+  const add = (tag, cls, txt) => {
+    if (!txt) return;
+    const el = document.createElement(tag);
+    if (cls) el.className = cls;
+    el.textContent = txt;
+    document.body.insertBefore(el, document.querySelector(".rodape"));
+  };
+  add("div", "numero", s.numero);
+  add("h1", "", s.titulo);
+  add("p", "apoio", s.apoio);
+  add("p", "texto", s.texto);
+
+  document.getElementById("conta").textContent = meta.conta || "";
+  document.getElementById("pagina").textContent = `${meta.indice}/${meta.total}`;
+  document.getElementById("barra").style.width = `${(meta.indice / meta.total) * 100}%`;
+})();
+</script>
+</body>
+</html>
