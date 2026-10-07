@@ -1,6 +1,6 @@
 ---
 name: instagram-conteudo
-description: Cria conteúdo de Instagram para um dos perfis em perfis/ (tecnologia, maternidade) — pauta/calendário, carrossel, roteiro de Reels, Stories e legenda com hashtags. Use quando pedirem post, carrossel, reels, ideias de pauta, calendário editorial, legenda, gancho ou "conteúdo pro insta".
+description: Cria conteúdo de Instagram para um dos perfis em perfis/ (tecnologia, maternidade) — pauta/calendário com tendências, carrossel, roteiro de Reels, Stories, legenda com hashtags, otimização de bio/perfil, reaproveitamento de conteúdo entre formatos e revisão "tirar cara de IA". Use quando pedirem post, carrossel, reels, ideias de pauta, calendário editorial, legenda, gancho, bio, melhorar o perfil, reaproveitar/transformar um post, humanizar texto ou "conteúdo pro insta".
 ---
 
 # Criação de conteúdo para Instagram
@@ -19,8 +19,9 @@ voz, FAQ ou conteúdo de um perfil no outro. Abaixo, `<perfil>` é a pasta escol
 1. Leia `perfis/<perfil>/perfil.md`. Se houver campos `<...>` não preenchidos que afetem
    a peça pedida (público, voz, pilares, compliance), **pergunte antes** — no
    máximo 3 perguntas objetivas. Não invente o nicho.
-2. Leia `references/formatos.md` (specs de cada formato) e
-   `references/ganchos.md` (fórmulas de gancho).
+2. Leia `references/formatos.md` (specs de cada formato),
+   `references/ganchos.md` (fórmulas de gancho) e `references/humanizer.md`
+   (revisão anti-"cara de IA", obrigatória em todo texto entregue).
 3. Liste `conteudo/<perfil>/` para não repetir temas recentes.
 
 ## 1. Escolher o modo
@@ -32,6 +33,9 @@ voz, FAQ ou conteúdo de um perfil no outro. Abaixo, `<perfil>` é a pasta escol
 | "reels", "vídeo", "roteiro" | **Reels** | pasta da peça com `roteiro.md` + `legenda.md` |
 | "stories", "sequência" | **Stories** | pasta da peça com `roteiro.md` |
 | "legenda" para algo pronto | **Legenda** | `legenda.md` |
+| "bio", "melhorar o perfil", "destaques" | **Perfil** — siga `references/perfil-otimizacao.md` | `conteudo/<perfil>/perfil-otimizado-AAAA-MM-DD.md` |
+| "reaproveitar", "transformar em reels/stories" | **Reaproveitar** — siga `references/reaproveitamento.md` | subpastas na pasta da peça original |
+| "humaniza", "tá com cara de IA", texto colado para revisar | **Humanizer** — só `references/humanizer.md` | texto revisado + antes/depois dos trechos ajustados |
 
 Pasta da peça: `conteudo/<perfil>/AAAA-MM-DD-<slug>/` (copie a estrutura de `conteudo/_modelo/`).
 
@@ -48,15 +52,33 @@ Pasta da peça: `conteudo/<perfil>/AAAA-MM-DD-<slug>/` (copie a estrutura de `co
    Para gerar comentários, prefira pergunta fechada ou palavra-chave
    ("comenta GUIA que te mando") — isso alimenta a skill `instagram-comentarios`.
 5. **Legenda:** ver `formatos.md#legenda`.
-6. **Checklist final:** rode `references/checklist.md` e marque no `roteiro.md`.
+6. **Humanizer:** aplique `references/humanizer.md` em slides/roteiro e legenda.
+   Anote no `roteiro.md` quantos trechos mudaram e 2–3 exemplos antes → depois.
+7. **Checklist final:** rode `references/checklist.md` e marque no `roteiro.md`.
    Se algum item de compliance falhar, corrija antes de entregar.
 
 ## 3. Modo Pauta (calendário)
 
+**Antes de montar, pesquise tendências** (passo recomendado, pule se o usuário dispensar):
+
+1. Se a skill `last30days` estiver instalada (ver `docs/ferramentas-comentarios.md`),
+   rode-a com 2–3 temas do nicho, escritos como o público pesquisaria
+   (ex.: "sono do bebê 4 meses", "IA para quem trabalha com planilha").
+   Peça Reddit + YouTube; Instagram/TikTok só se houver `SCRAPECREATORS_API_KEY`.
+   **Nunca autorize leitura de cookies do navegador** (`--no-browser-cookies`).
+2. Sem a skill, use a busca web disponível com o mesmo recorte dos últimos 30 dias.
+3. Salve um resumo em `conteudo/<perfil>/tendencias-AAAA-MM.md`: 5–10 assuntos em
+   alta, as perguntas/dores que mais aparecem (palavras do público) e os links.
+4. Use esse arquivo para escolher temas e ganchos — cite no briefing de cada peça
+   qual tendência ela aproveita. Tendência que fere o compliance do perfil fica de fora.
+
 - Peça ao usuário: período, frequência (posts/semana) e datas importantes.
 - Distribua os pilares conforme a % em `perfil.md`.
 - Varie formatos (carrossel / reels / stories) e alterne objetivos.
-- Para cada item: data, pilar, formato, ideia central, gancho provisório, CTA.
+- Para cada item: data, pilar, formato, ideia central, gancho provisório, CTA
+  e a tendência de origem (se houver).
+- Se o CTA for "comenta X que eu te mando", anote o link/material a entregar —
+  vira uma entrada em `perfis/<perfil>/campanhas.json` quando o post sair.
 - Inclua 2–3 "séries" recorrentes (ex.: "Mito ou Verdade às quartas") — séries
   facilitam produção e criam hábito no público.
 
