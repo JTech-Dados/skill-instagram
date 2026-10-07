@@ -11,7 +11,7 @@ quando pedirem.
 - [x] 🤖 Criar a branch base `main` com README e licença MIT (2026-10-07)
 - [x] 🤖 Abrir o PR da branch do harness para `main` (2026-10-07)
 - [x] 👤 Revisar e fazer merge do PR — JTech-Dados/skill-instagram#1 (2026-10-07)
-- [ ] 👤 Conferir no GitHub se `main` está como branch padrão (Settings → Default branch)
+- [x] 👤 `main` definida como branch padrão no GitHub (2026-10-07)
 - [ ] 👤 Confirmar a licença: ficou **MIT** (aberta). Se o repo for privado/comercial
       e não quiserem permitir reuso, trocar por "Todos os direitos reservados".
 
