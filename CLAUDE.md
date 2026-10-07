@@ -14,4 +14,5 @@ Perfis atuais: `tecnologia` (conta do dono do repo) e `maternidade` (conta da es
 - Nunca commite `.env`, tokens ou `comentarios/**/*.json`.
 - Só Graph API oficial; não sugerir bibliotecas de API privada (instagrapi etc.).
 - Scripts Python: só stdlib, exceto Playwright no render de carrossel.
+- Pendências do projeto: `.claude/pendencias.md` — atualize ao concluir algo.
 - Peças novas vão em `conteudo/<perfil>/AAAA-MM-DD-<slug>/`, a partir de `conteudo/_modelo/`.
