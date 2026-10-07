@@ -48,7 +48,7 @@ Claude organiza nos arquivos.
 
 ## 3. Acesso à API do Instagram (para comentários)
 
-Passo a passo em `docs/setup-meta.md`. Repetir para **cada** conta.
+Passo a passo em `CONECTAR-INSTAGRAM.md`. Repetir para **cada** conta.
 
 - [ ] 👤 Converter as duas contas para Profissional (Criador ou Empresa)
 - [ ] 👤 Criar o app em developers.facebook.com (um app pode servir as duas contas)
@@ -56,6 +56,10 @@ Passo a passo em `docs/setup-meta.md`. Repetir para **cada** conta.
 - [ ] 👤 Gerar token de longa duração com `instagram_business_basic` +
       `instagram_business_manage_comments` + `instagram_business_manage_messages`
       (esta última é a da DM para quem comentou)
+- [ ] 👤 Instagram de cada conta: **Permitir acesso a mensagens** (Ferramentas conectadas)
+- [ ] 👤 Adicionar 1–2 contas amigas como **Testador do Instagram** para testar a DM
+- [ ] 👤 Fase 2 (DM para qualquer seguidor): verificação da empresa + App Review de
+      `instagram_business_manage_messages` + app publicado
 - [ ] 👤 Criar `perfis/tecnologia/.env` e `perfis/maternidade/.env` a partir de
       `perfis/_modelo/.env.example` (nunca commitar)
 - [ ] 👤 Anotar a data de expiração dos tokens (60 dias) — ver item 5

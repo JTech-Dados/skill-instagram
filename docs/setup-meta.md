@@ -1,75 +1,48 @@
 # Configurar acesso à API do Instagram
 
-Necessário só para a skill de comentários (`scripts/ig_comments.py`). A skill de
-conteúdo funciona sem nada disso.
+O passo a passo completo, clique a clique, está em
+**[`CONECTAR-INSTAGRAM.md`](../CONECTAR-INSTAGRAM.md)** na raiz do repositório.
 
-## 1. Conta
+Esta página é só a referência técnica.
 
-Converta o perfil para **Profissional** (Criador ou Empresa):
-Configurações → Tipo de conta e ferramentas → Mudar para conta profissional.
+## Permissões usadas
 
-## 2. App na Meta
+| Permissão | Para quê |
+|---|---|
+| `instagram_business_basic` | ler perfil e posts |
+| `instagram_business_manage_comments` | ler, responder e ocultar comentários |
+| `instagram_business_manage_messages` | DM para quem comentou (private reply) |
 
-1. Acesse <https://developers.facebook.com/apps> → **Criar app** → caso de uso
-   "Gerenciar mensagens e conteúdo no Instagram".
-2. Em **Instagram → Configuração da API com login do Instagram**, adicione sua
-   conta como testadora (Funções do app) e aceite o convite no Instagram
-   (Configurações → Apps e sites).
-3. Gere o token com as permissões:
-   - `instagram_business_basic`
-   - `instagram_business_manage_comments` (responder/ocultar)
-   - `instagram_business_manage_messages` (DM para quem comentou — campanhas)
-4. Troque o token curto por um **token de longa duração** (60 dias) e anote a data
-   de expiração. Renove antes de vencer:
-   `GET https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=<TOKEN>`
+Em modo de desenvolvimento o app só interage com contas que têm função no app.
+Para DM a seguidores reais: verificação da empresa + App Review (acesso avançado)
++ app publicado. Detalhes na seção "Fase 1 × Fase 2" do guia.
 
-Para uso só na sua própria conta não é preciso App Review.
+## Variáveis lidas por `scripts/ig_comments.py`
 
-Dica: a Meta tem um MCP oficial de *devtools* (`mcp.facebook.com/devtools`) para
-gerenciar apps, webhooks e App Review pelo Claude. Pode ajudar nesta etapa; ele
-não acessa posts nem comentários.
+| Variável | Padrão | Observação |
+|---|---|---|
+| `IG_ACCESS_TOKEN` | — | obrigatório |
+| `IG_USERNAME` | buscado na API | @ da conta, sem @ |
+| `IG_USER_ID` | `me` | obrigatório só com Facebook Login |
+| `IG_API_HOST` | `graph.instagram.com` | `graph.facebook.com` se usar Facebook Login + Página |
+| `IG_API_VERSION` | `v26.0` | |
 
-Custo: a API do Instagram não cobra por chamada nem por mensagem.
+Onde ficam:
+- **Local:** `perfis/<perfil>/.env` (modelo em `perfis/_modelo/.env.example`, fora do git).
+- **Nuvem:** variáveis do ambiente com sufixo do perfil, ex. `IG_ACCESS_TOKEN_TECNOLOGIA`.
+  O sufixo vence a variável genérica.
 
-Repita os passos para cada conta (tecnologia e maternidade) — cada uma tem seu token.
+## Renovar token
 
-## 3. Variáveis de ambiente
+`GET https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=<TOKEN>`
+(token com mais de 24 h e ainda válido; dura mais 60 dias).
 
-Para cada perfil, copie `perfis/_modelo/.env.example` para `perfis/<perfil>/.env`
-(já está no `.gitignore`) e preencha:
+## Ferramentas
 
-```bash
-IG_ACCESS_TOKEN=...
-IG_USERNAME=suaconta
-# IG_API_HOST=graph.facebook.com   # só se usar Facebook Login + Página
-# IG_USER_ID=1784...               # obrigatório com Facebook Login
-```
+A Meta tem um MCP oficial de *devtools* (`mcp.facebook.com/devtools`) para
+gerenciar apps, webhooks e App Review pelo Claude. Não acessa posts nem comentários.
 
-O script carrega esse arquivo sozinho quando recebe `--perfil <perfil>`.
+## Erros
 
-### Rodando no Claude Code na nuvem (claude.ai/code)
-
-Lá não existe o `.env` (ele não vai para o GitHub). Cadastre os tokens nas
-variáveis do ambiente: menu do ambiente na barra de título da sessão → **Editar**
-→ variáveis de ambiente (ou "Network secrets"/"API credentials", se aparecer).
-Use o sufixo do perfil:
-
-```
-IG_ACCESS_TOKEN_TECNOLOGIA=...
-IG_USERNAME_TECNOLOGIA=suaconta
-IG_ACCESS_TOKEN_MATERNIDADE=...
-IG_USERNAME_MATERNIDADE=contadela
-```
-
-Abra uma **sessão nova** depois de salvar. Nunca cole o token no chat.
-
-## 4. Testar
-
-```bash
-python3 scripts/ig_comments.py --perfil tecnologia fetch --dias 7
-```
-
-Deve gerar `comentarios/tecnologia/pendentes-<data>.json`. Erro `190` = token inválido/expirado;
-erro `10`/`200` = permissão faltando.
-
-> **Nunca** commite o token. Se vazar, revogue no painel da Meta e gere outro.
+`190` = token inválido/vencido · `10`/`200` = permissão faltando ·
+DM falhando só para alguns = pessoa sem função no app (modo dev) ou comentário com mais de 7 dias.
