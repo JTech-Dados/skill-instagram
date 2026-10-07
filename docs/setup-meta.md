@@ -47,6 +47,22 @@ IG_USERNAME=suaconta
 
 O script carrega esse arquivo sozinho quando recebe `--perfil <perfil>`.
 
+### Rodando no Claude Code na nuvem (claude.ai/code)
+
+Lá não existe o `.env` (ele não vai para o GitHub). Cadastre os tokens nas
+variáveis do ambiente: menu do ambiente na barra de título da sessão → **Editar**
+→ variáveis de ambiente (ou "Network secrets"/"API credentials", se aparecer).
+Use o sufixo do perfil:
+
+```
+IG_ACCESS_TOKEN_TECNOLOGIA=...
+IG_USERNAME_TECNOLOGIA=suaconta
+IG_ACCESS_TOKEN_MATERNIDADE=...
+IG_USERNAME_MATERNIDADE=contadela
+```
+
+Abra uma **sessão nova** depois de salvar. Nunca cole o token no chat.
+
 ## 4. Testar
 
 ```bash

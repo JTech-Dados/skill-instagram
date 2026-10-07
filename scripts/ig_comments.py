@@ -6,7 +6,8 @@ Sem dependências externas (só stdlib).
 
 Cada perfil (perfis/<perfil>/) tem seu próprio .env com o token da conta.
 Com --perfil, o script carrega perfis/<perfil>/.env e grava em comentarios/<perfil>/.
-Variáveis já definidas no ambiente têm prioridade sobre o .env.
+Variáveis já definidas no ambiente têm prioridade sobre o .env. Na nuvem (sem .env),
+use variáveis com o sufixo do perfil: IG_ACCESS_TOKEN_TECNOLOGIA, IG_USERNAME_MATERNIDADE...
 
 Variáveis de ambiente:
   IG_ACCESS_TOKEN  token da conta profissional (obrigatório)
@@ -50,6 +51,11 @@ class ApiError(RuntimeError):
 
 
 def _carregar_perfil(perfil):
+    # variáveis com sufixo do perfil (ex.: IG_ACCESS_TOKEN_TECNOLOGIA) vencem as genéricas
+    sufixo = "_" + re.sub(r"\W", "_", perfil).upper()
+    for chave in ("IG_ACCESS_TOKEN", "IG_USERNAME", "IG_USER_ID", "IG_API_HOST", "IG_API_VERSION"):
+        if os.environ.get(chave + sufixo):
+            os.environ[chave] = os.environ[chave + sufixo]
     pasta = PASTA_PERFIS / perfil
     if not pasta.is_dir():
         existentes = sorted(d.name for d in PASTA_PERFIS.iterdir() if d.is_dir() and not d.name.startswith("_"))
@@ -67,7 +73,7 @@ def _carregar_perfil(perfil):
 def _config():
     token = os.environ.get("IG_ACCESS_TOKEN")
     if not token:
-        sys.exit("IG_ACCESS_TOKEN não definido (perfis/<perfil>/.env). Veja docs/setup-meta.md.")
+        sys.exit("IG_ACCESS_TOKEN não definido (perfis/<perfil>/.env ou IG_ACCESS_TOKEN_<PERFIL>). Veja docs/setup-meta.md.")
     host = os.environ.get("IG_API_HOST", "graph.instagram.com")
     versao = os.environ.get("IG_API_VERSION", "v26.0")
     return {
