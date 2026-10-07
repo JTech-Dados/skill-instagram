@@ -8,13 +8,12 @@ quando pedirem.
 
 ## 1. Repositório
 
-- [ ] 👤 **Criar a branch base `main`.** O repo só tem `claude/pensive-ride-hzqof9`,
-      então não há base para abrir o PR. Escolher uma opção:
-  - liberar push forçado nessa branch para o Claude criar `main` e rebasear; ou
-  - criar `main` pela interface do GitHub (ex.: adicionar um README) e o Claude
-    faz merge + abre o PR; ou
-  - definir `claude/pensive-ride-hzqof9` como default e renomear para `main`.
-- [ ] 🤖 Abrir o PR para `main` depois do item acima.
+- [x] 🤖 Criar a branch base `main` com README e licença MIT (2026-10-07)
+- [x] 🤖 Abrir o PR da branch do harness para `main` (2026-10-07)
+- [ ] 👤 Revisar e fazer merge do PR
+- [ ] 👤 Conferir no GitHub se `main` está como branch padrão (Settings → Default branch)
+- [ ] 👤 Confirmar a licença: ficou **MIT** (aberta). Se o repo for privado/comercial
+      e não quiserem permitir reuso, trocar por "Todos os direitos reservados".
 
 ## 2. Definir os nichos (em aberto)
 

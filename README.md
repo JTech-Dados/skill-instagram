@@ -54,3 +54,11 @@ perfis/<perfil>/.env      ───► skill instagram-comentarios ──► com
 - **Sem fatos inventados.** Números marcados com `[FONTE?]`; preço/links só da FAQ.
 - **Perfis não se misturam.** Voz, FAQ, token e arquivos ficam separados por pasta.
 - **Dados de terceiros fora do git.** `comentarios/**/*.json` está no `.gitignore`.
+
+## Pendências
+
+O que falta para rodar nas duas contas está em [`.claude/pendencias.md`](.claude/pendencias.md).
+
+## Licença
+
+[MIT](LICENSE) © 2026 JTech-Dados.
