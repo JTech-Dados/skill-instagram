@@ -19,6 +19,10 @@ A API do Instagram (Graph API / Instagram Platform) **não cobra por chamada nem
 por mensagem**. Responder comentário, ocultar e mandar DM a partir de comentário
 é gratuito. O que existe são limites de uso (rate limit por conta) e regras:
 DM a partir de comentário só 1 por comentário, até 7 dias.
+**Atenção:** com o app em modo de desenvolvimento, a DM só funciona para contas
+com função no app (testadores). Para qualquer seguidor é preciso App Review —
+ver "Fase 1 × Fase 2" em `CONECTAR-INSTAGRAM.md`. Ferramentas como ManyChat já
+passaram por essa revisão; é parte do que se paga nelas.
 Quem cobra são as plataformas por cima (ManyChat, n8n Cloud, Chatwoot Cloud,
 ScrapeCreators...). Confirme sempre no painel da Meta — política de preço pode mudar.
 
@@ -79,7 +83,7 @@ ScrapeCreators...). Confirme sempre no painel da Meta — política de preço po
 - **Oficiais da Meta** (`mcp.facebook.com`): existem para **Ads** e para
   **devtools** (gerenciar app, webhooks, App Review). **Não há MCP oficial para
   Instagram orgânico** (posts, comentários, DMs). O de devtools pode ajudar na
-  configuração do app — ver `docs/setup-meta.md`.
+  configuração do app — ver `CONECTAR-INSTAGRAM.md`.
 - **De terceiros** (luminarylane, AleemHaider, mikusnuz/meta-mcp, CLABS...):
   usam a API oficial, mas são projetos pequenos (alguns com < 10 estrelas) e o
   token dá controle total da conta. **Não usar sem ler o código** e fixar versão.

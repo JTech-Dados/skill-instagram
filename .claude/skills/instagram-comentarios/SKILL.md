@@ -44,7 +44,7 @@ Use quando o pedido for mandar algo na DM para quem comentou num post/reel.
 
 Regras da DM (private reply): 1 mensagem por comentário, até 7 dias depois dele.
 Respostas seguintes só se a pessoa responder a DM. Exige a permissão
-`instagram_business_manage_messages` no token (ver `docs/setup-meta.md`).
+`instagram_business_manage_messages` no token (ver `CONECTAR-INSTAGRAM.md`).
 
 ## 1. Buscar
 
@@ -52,7 +52,7 @@ Respostas seguintes só se a pessoa responder a DM. Exige a permissão
 python3 scripts/ig_comments.py --perfil <perfil> fetch --dias 3
 ```
 
-- Precisa de `IG_ACCESS_TOKEN` em `perfis/<perfil>/.env` (ver `docs/setup-meta.md`). Se faltar,
+- Precisa de `IG_ACCESS_TOKEN` em `perfis/<perfil>/.env` (ver `CONECTAR-INSTAGRAM.md`). Se faltar,
   avise o usuário e pare — não tente outra forma de acesso.
 - Gera `comentarios/<perfil>/pendentes-AAAA-MM-DD.json` só com comentários que ainda não
   têm resposta da própria conta.

@@ -73,7 +73,7 @@ def _carregar_perfil(perfil):
 def _config():
     token = os.environ.get("IG_ACCESS_TOKEN")
     if not token:
-        sys.exit("IG_ACCESS_TOKEN não definido (perfis/<perfil>/.env ou IG_ACCESS_TOKEN_<PERFIL>). Veja docs/setup-meta.md.")
+        sys.exit("IG_ACCESS_TOKEN não definido (perfis/<perfil>/.env ou IG_ACCESS_TOKEN_<PERFIL>). Veja CONECTAR-INSTAGRAM.md.")
     host = os.environ.get("IG_API_HOST", "graph.instagram.com")
     versao = os.environ.get("IG_API_VERSION", "v26.0")
     return {

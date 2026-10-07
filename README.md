@@ -25,7 +25,8 @@ perfis/<perfil>/.env      ───► skill instagram-comentarios ──► com
 | Campanhas "comenta X que eu te mando o link" | `perfis/<perfil>/campanhas.json` |
 | Carrossel HTML → PNG 1080×1350 | `scripts/render_carrossel.py` + `templates/carrossel.html` |
 | Ferramentas avaliadas (comentários, DMs, tendências) | `docs/ferramentas-comentarios.md` |
-| Configurar token da Meta | `docs/setup-meta.md` |
+| **Conectar o Instagram (passo a passo)** | [`CONECTAR-INSTAGRAM.md`](CONECTAR-INSTAGRAM.md) |
+| Referência técnica da API | `docs/setup-meta.md` |
 
 ## Começando
 
@@ -39,7 +40,8 @@ perfis/<perfil>/.env      ───► skill instagram-comentarios ──► com
    - "roteiro de reels de 30s sobre <tema> pro tecnologia"
    - "responde os comentários da conta de maternidade dos últimos 3 dias"
    - "manda o link do guia na DM de quem comentou GUIA no último reel do tecnologia"
-3. Para comentários, configure o token antes: `docs/setup-meta.md`.
+3. Para comentários e DM, conecte as contas seguindo
+   **[`CONECTAR-INSTAGRAM.md`](CONECTAR-INSTAGRAM.md)** (criar o app na Meta, gerar o token, guardar).
 
 ### Dependências
 
