@@ -1,0 +1,3 @@
+# Só necessário para renderizar carrosséis (scripts/render_carrossel.py).
+# scripts/ig_comments.py usa apenas a biblioteca padrão.
+playwright>=1.40
