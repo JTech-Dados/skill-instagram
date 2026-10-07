@@ -12,8 +12,7 @@ quando pedirem.
 - [x] 🤖 Abrir o PR da branch do harness para `main` (2026-10-07)
 - [x] 👤 Revisar e fazer merge do PR — JTech-Dados/skill-instagram#1 (2026-10-07)
 - [x] 👤 `main` definida como branch padrão no GitHub (2026-10-07)
-- [ ] 👤 Confirmar a licença: ficou **MIT** (aberta). Se o repo for privado/comercial
-      e não quiserem permitir reuso, trocar por "Todos os direitos reservados".
+- [x] 👤 Licença confirmada: **MIT** (2026-10-07)
 
 ## 2. Definir os nichos (em aberto)
 
