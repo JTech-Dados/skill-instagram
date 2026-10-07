@@ -1,0 +1,17 @@
+{
+  "_como_usar": "Uma entrada por post/reel em que quem comentar recebe algo na DM. 'post' aceita o link do post/reel ou o media_id. 'palavra_chave' vazia = qualquer comentário vale. Em 'dm', {username} vira o @ da pessoa. Copie para perfis/<perfil>/campanhas.json.",
+  "campanhas": [
+    {
+      "nome": "exemplo-guia",
+      "ativa": false,
+      "post": "https://www.instagram.com/reel/SHORTCODE/",
+      "palavra_chave": "GUIA",
+      "dm": "Oi @{username}! Que bom que você quer o guia 💙 Aqui está: https://seu-link.com",
+      "respostas_publicas": [
+        "Te mandei na DM! 📩",
+        "Enviado no direct, confere lá!",
+        "Já tá na sua DM 😉"
+      ]
+    }
+  ]
+}

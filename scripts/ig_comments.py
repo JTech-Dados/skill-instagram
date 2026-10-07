@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Busca e publica respostas de comentários do Instagram via Graph API oficial.
+"""Busca comentários do Instagram, publica respostas aprovadas e envia DM a quem
+comentou (private reply), via Graph API oficial.
 
 Sem dependências externas (só stdlib).
 
@@ -14,17 +15,24 @@ Variáveis de ambiente:
                    se vazio, é buscado na API)
   IG_API_HOST      graph.instagram.com (Instagram Login, padrão)
                    ou graph.facebook.com (Facebook Login / Página vinculada)
-  IG_API_VERSION   padrão v24.0
+  IG_API_VERSION   padrão v26.0
 
 Uso:
   python3 scripts/ig_comments.py --perfil tecnologia fetch [--dias 3] [--posts 15] [--saida ARQ]
+  python3 scripts/ig_comments.py --perfil tecnologia campanha [--nome NOME] [--dias 7]
   python3 scripts/ig_comments.py --perfil tecnologia publicar ARQ.json [--confirmar] [--intervalo 4]
+
+Itens do rascunho (acao = "responder") podem ter "resposta" (pública), "dm"
+(mensagem privada para quem comentou) ou os dois. A DM usa o recurso de
+"private reply": 1 por comentário, até 7 dias depois do comentário.
 """
 
 import argparse
 import datetime as dt
 import json
 import os
+import random
+import re
 import sys
 import time
 import urllib.error
@@ -61,7 +69,7 @@ def _config():
     if not token:
         sys.exit("IG_ACCESS_TOKEN não definido (perfis/<perfil>/.env). Veja docs/setup-meta.md.")
     host = os.environ.get("IG_API_HOST", "graph.instagram.com")
-    versao = os.environ.get("IG_API_VERSION", "v24.0")
+    versao = os.environ.get("IG_API_VERSION", "v26.0")
     return {
         "token": token,
         "base": f"https://{host}/{versao}",
@@ -117,18 +125,47 @@ def _parse_ts(ts):
     return dt.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S%z")
 
 
-def cmd_fetch(args):
-    cfg = _config()
+def _pasta_saida(args):
+    pasta = PASTA_COMENTARIOS / args.perfil if args.perfil else PASTA_COMENTARIOS
+    pasta.mkdir(parents=True, exist_ok=True)
+    return pasta
+
+
+def _carregar_historico(pasta):
+    arq = pasta / "historico.json"
+    return json.loads(arq.read_text(encoding="utf-8")) if arq.exists() else []
+
+
+def _registrar_historico(pasta, item):
+    historico = _carregar_historico(pasta)
+    historico.append({
+        "comment_id": item.get("comment_id"),
+        "username": item.get("username"),
+        "media_id": item.get("media_id"),
+        "acao": item.get("acao"),
+        "campanha": item.get("campanha"),
+        "dm": bool(item.get("dm_enviada_em")),
+        "em": item.get("publicado_em"),
+    })
+    (pasta / "historico.json").write_text(json.dumps(historico, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _shortcode(url_ou_id):
+    m = re.search(r"/(?:p|reel|reels|tv)/([^/?#]+)", url_ou_id or "")
+    return m.group(1) if m else None
+
+
+def _buscar_pendentes(cfg, dias, n_posts, ja_tratados):
     username = cfg["username"]
     if not username:
         username = _request(cfg, "GET", cfg["user_id"], {"fields": "username"})["username"].lower()
 
-    corte = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=args.dias)
+    corte = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=dias)
     posts = _paginar(
         cfg,
         f"{cfg['user_id']}/media",
         {"fields": "id,caption,permalink,timestamp,comments_count", "limit": 25},
-        args.posts,
+        n_posts,
     )
 
     pendentes = []
@@ -146,7 +183,7 @@ def cmd_fetch(args):
         )
         for c in comentarios:
             autor = (c.get("username") or "").lower()
-            if autor == username or _parse_ts(c["timestamp"]) < corte:
+            if autor == username or c["id"] in ja_tratados or _parse_ts(c["timestamp"]) < corte:
                 continue
             respostas = c.get("replies", {}).get("data", [])
             if any((r.get("username") or "").lower() == username for r in respostas):
@@ -166,13 +203,75 @@ def cmd_fetch(args):
             })
 
     pendentes.sort(key=lambda c: c["timestamp"])
-    pasta = PASTA_COMENTARIOS / args.perfil if args.perfil else PASTA_COMENTARIOS
-    saida = Path(args.saida) if args.saida else (
-        pasta / f"pendentes-{dt.date.today().isoformat()}.json"
-    )
-    saida.parent.mkdir(parents=True, exist_ok=True)
+    return pendentes, len(posts)
+
+
+def cmd_fetch(args):
+    cfg = _config()
+    pasta = _pasta_saida(args)
+    ja_tratados = {h["comment_id"] for h in _carregar_historico(pasta)}
+    pendentes, n_posts = _buscar_pendentes(cfg, args.dias, args.posts, ja_tratados)
+    saida = Path(args.saida) if args.saida else pasta / f"pendentes-{dt.date.today().isoformat()}.json"
     saida.write_text(json.dumps(pendentes, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"{len(pendentes)} comentário(s) pendente(s) em {len(posts)} post(s) → {saida}")
+    print(f"{len(pendentes)} comentário(s) pendente(s) em {n_posts} post(s) → {saida}")
+
+
+def cmd_campanha(args):
+    if not args.perfil:
+        sys.exit("campanha exige --perfil.")
+    arq = PASTA_PERFIS / args.perfil / "campanhas.json"
+    if not arq.exists():
+        sys.exit(f"{arq} não existe. Copie perfis/_modelo/campanhas.json e preencha.")
+    campanhas = [c for c in json.loads(arq.read_text(encoding="utf-8"))["campanhas"] if c.get("ativa")]
+    if args.nome:
+        campanhas = [c for c in campanhas if c.get("nome") == args.nome]
+    if not campanhas:
+        sys.exit("Nenhuma campanha ativa encontrada.")
+
+    cfg = _config()
+    pasta = _pasta_saida(args)
+    historico = _carregar_historico(pasta)
+    ja_tratados = {h["comment_id"] for h in historico}
+    pendentes, _ = _buscar_pendentes(cfg, min(args.dias, 7), args.posts, ja_tratados)
+
+    rascunho = []
+    for camp in campanhas:
+        alvo = str(camp["post"])
+        codigo = _shortcode(alvo)
+        palavra = (camp.get("palavra_chave") or "").strip().lower()
+        # 1 DM por pessoa por campanha, contando o que já foi enviado antes
+        receberam = {
+            (h.get("username") or "").lower()
+            for h in historico if h.get("dm") and h.get("campanha") == camp["nome"]
+        }
+        for c in pendentes:
+            mesmo_post = c["media_id"] == alvo or (codigo and _shortcode(c["media_permalink"]) == codigo)
+            if not mesmo_post:
+                continue
+            if palavra and palavra not in c["texto"].lower():
+                continue
+            pessoa = (c["username"] or "").lower()
+            if pessoa in receberam:
+                continue
+            receberam.add(pessoa)
+            rascunho.append({
+                **c,
+                "categoria": "palavra_chave",
+                "campanha": camp["nome"],
+                "acao": "responder",
+                "resposta": random.choice(camp.get("respostas_publicas") or [""]),
+                "dm": camp["dm"].replace("{username}", c["username"] or ""),
+                "motivo": f"campanha {camp['nome']}",
+                "aprovado": False,
+            })
+
+    if not rascunho:
+        print("Ninguém novo para receber DM.")
+        return
+    saida = pasta / f"campanha-{dt.datetime.now().strftime('%Y-%m-%d-%H%M%S')}.json"
+    saida.write_text(json.dumps(rascunho, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"{len(rascunho)} pessoa(s) para receber DM → {saida}")
+    print("Revise, marque \"aprovado\": true e rode: publicar <arquivo> --confirmar")
 
 
 def cmd_publicar(args):
@@ -191,7 +290,11 @@ def cmd_publicar(args):
     for i in fila:
         alvo = f"@{i.get('username')}: {i.get('texto', '')[:60]!r}"
         if i["acao"] == "responder":
-            print(f"[responder] {alvo}\n    → {i['resposta']}")
+            print(f"[responder] {alvo}")
+            if i.get("resposta"):
+                print(f"    pública → {i['resposta']}")
+            if i.get("dm"):
+                print(f"    DM      → {i['dm']}")
         else:
             print(f"[ocultar]   {alvo}")
 
@@ -206,6 +309,7 @@ def cmd_publicar(args):
         return
 
     cfg = _config()
+    pasta = _pasta_saida(args)
     falhas = 0
     for n, i in enumerate(fila):
         if not i.get("comment_id"):
@@ -213,13 +317,25 @@ def cmd_publicar(args):
             falhas += 1
             continue
         try:
+            agora = lambda: dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
             if i["acao"] == "responder":
-                resp = _request(cfg, "POST", f"{i['comment_id']}/replies", {"message": i["resposta"]})
-                i["reply_id"] = resp.get("id")
+                if not i.get("resposta") and not i.get("dm"):
+                    raise ApiError("item sem 'resposta' nem 'dm'")
+                # cada etapa grava seu carimbo: se falhar no meio, não repete o que já foi
+                if i.get("resposta") and not i.get("reply_id"):
+                    resp = _request(cfg, "POST", f"{i['comment_id']}/replies", {"message": i["resposta"]})
+                    i["reply_id"] = resp.get("id")
+                if i.get("dm") and not i.get("dm_enviada_em"):
+                    _request(cfg, "POST", f"{cfg['user_id']}/messages", {
+                        "recipient": json.dumps({"comment_id": i["comment_id"]}),
+                        "message": json.dumps({"text": i["dm"]}, ensure_ascii=False),
+                    })
+                    i["dm_enviada_em"] = agora()
             else:
                 _request(cfg, "POST", i["comment_id"], {"hide": "true"})
-            i["publicado_em"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+            i["publicado_em"] = agora()
             i.pop("erro", None)
+            _registrar_historico(pasta, i)
         except ApiError as e:
             i["erro"] = str(e)
             falhas += 1
@@ -243,6 +359,12 @@ def main():
     f.add_argument("--posts", type=int, default=15, help="nº de posts recentes (padrão 15)")
     f.add_argument("--saida", help="arquivo de saída (padrão comentarios/<perfil>/pendentes-<data>.json)")
     f.set_defaults(func=cmd_fetch)
+
+    c = sub.add_parser("campanha", help="monta rascunho de DMs para quem comentou em post de campanha")
+    c.add_argument("--nome", help="só esta campanha (padrão: todas as ativas)")
+    c.add_argument("--dias", type=int, default=7, help="janela (máx. 7, limite da private reply)")
+    c.add_argument("--posts", type=int, default=15, help="nº de posts recentes (padrão 15)")
+    c.set_defaults(func=cmd_campanha)
 
     pub = sub.add_parser("publicar", help="publica respostas aprovadas")
     pub.add_argument("arquivo")

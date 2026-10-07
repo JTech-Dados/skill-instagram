@@ -54,14 +54,16 @@ Passo a passo em `docs/setup-meta.md`. Repetir para **cada** conta.
 - [ ] 👤 Criar o app em developers.facebook.com (um app pode servir as duas contas)
 - [ ] 👤 Adicionar as contas como testadoras e aceitar o convite no Instagram
 - [ ] 👤 Gerar token de longa duração com `instagram_business_basic` +
-      `instagram_business_manage_comments`
+      `instagram_business_manage_comments` + `instagram_business_manage_messages`
+      (esta última é a da DM para quem comentou)
 - [ ] 👤 Criar `perfis/tecnologia/.env` e `perfis/maternidade/.env` a partir de
       `perfis/_modelo/.env.example` (nunca commitar)
 - [ ] 👤 Anotar a data de expiração dos tokens (60 dias) — ver item 5
 - [ ] 🤖 Primeiro teste real: `python3 scripts/ig_comments.py --perfil <perfil> fetch --dias 7`
       (até agora só foi testado com a API simulada)
-- [ ] 🤖 Conferir a versão da Graph API (`IG_API_VERSION`, padrão `v24.0`) com a
-      versão atual da Meta
+- [x] 🤖 Atualizar a versão padrão da Graph API para `v26.0` (2026-10-07)
+- [ ] 🤖 Primeira campanha real "comentou → DM" num reel de teste, com 1–2 contas
+      amigas comentando (só testado com API simulada)
 
 ## 4. Primeiras entregas (depois do item 2)
 
@@ -70,16 +72,27 @@ Passo a passo em `docs/setup-meta.md`. Repetir para **cada** conta.
 - [ ] 👤 Revisar os pilotos e ajustar `perfil.md` com o que não soou como vocês
 - [ ] 🤖 1ª rodada de comentários com aprovação manual (depois do item 3)
 - [ ] 👤 Alimentar o `faq.md` com as perguntas reais que aparecerem
+- [ ] 👤 Para cada post com "comenta X": preencher `perfis/<perfil>/campanhas.json`
+      (link do post, palavra-chave, texto da DM com o link)
 
 ## 5. Melhorias futuras (avaliar)
 
 - [ ] 🤖 Script para renovar o token antes de vencer (`refresh_access_token`)
 - [ ] 🤖 Ajustar `templates/carrossel.html` à identidade de cada conta (ou um
       template por perfil) quando as cores/fontes forem definidas
-- [ ] 🤖 Envio de DM a partir de comentário ("comenta GUIA") — hoje fica como
-      `escalar` para fazer à mão
+- [x] 🤖 Envio de DM a partir de comentário ("comenta GUIA") — comando `campanha`
+      + campo `dm` (2026-10-07)
+- [ ] 👤🤖 DM **instantânea** (segundos após o comentário): webhook `comments` +
+      n8n ou endpoint próprio, reaproveitando `campanhas.json`. Hoje é em lote
 - [ ] 👤🤖 Agendamento: decidir se usa Metricool (MCP já conectado na sessão) ou outro
 - [ ] 👤🤖 Respostas em tempo real com n8n + webhook (ver
       `docs/ferramentas-comentarios.md`) — só depois de calibrar a voz no modo manual
 - [ ] 🤖 Relatório simples de desempenho por pilar (o que gera mais salvamento/comentário)
+- [x] 🤖 Avaliar last30days e Chatwoot lendo o código (2026-10-07) — ver
+      `docs/ferramentas-comentarios.md`
+- [ ] 👤 Instalar a skill last30days na máquina de vocês (sem cookies do navegador)
+      e testar uma pesquisa por nicho
+- [x] 🤖 Passo de tendências antes da pauta na skill `instagram-conteudo` (2026-10-07)
+- [ ] 👤🤖 Chatwoot para DMs em equipe — só quando o volume de DMs justificar
+      (não trata comentários)
 - [ ] 🤖 SessionStart hook para instalar o Playwright automaticamente nas sessões na nuvem

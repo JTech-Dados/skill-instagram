@@ -53,10 +53,26 @@ Pasta da peça: `conteudo/<perfil>/AAAA-MM-DD-<slug>/` (copie a estrutura de `co
 
 ## 3. Modo Pauta (calendário)
 
+**Antes de montar, pesquise tendências** (passo recomendado, pule se o usuário dispensar):
+
+1. Se a skill `last30days` estiver instalada (ver `docs/ferramentas-comentarios.md`),
+   rode-a com 2–3 temas do nicho, escritos como o público pesquisaria
+   (ex.: "sono do bebê 4 meses", "IA para quem trabalha com planilha").
+   Peça Reddit + YouTube; Instagram/TikTok só se houver `SCRAPECREATORS_API_KEY`.
+   **Nunca autorize leitura de cookies do navegador** (`--no-browser-cookies`).
+2. Sem a skill, use a busca web disponível com o mesmo recorte dos últimos 30 dias.
+3. Salve um resumo em `conteudo/<perfil>/tendencias-AAAA-MM.md`: 5–10 assuntos em
+   alta, as perguntas/dores que mais aparecem (palavras do público) e os links.
+4. Use esse arquivo para escolher temas e ganchos — cite no briefing de cada peça
+   qual tendência ela aproveita. Tendência que fere o compliance do perfil fica de fora.
+
 - Peça ao usuário: período, frequência (posts/semana) e datas importantes.
 - Distribua os pilares conforme a % em `perfil.md`.
 - Varie formatos (carrossel / reels / stories) e alterne objetivos.
-- Para cada item: data, pilar, formato, ideia central, gancho provisório, CTA.
+- Para cada item: data, pilar, formato, ideia central, gancho provisório, CTA
+  e a tendência de origem (se houver).
+- Se o CTA for "comenta X que eu te mando", anote o link/material a entregar —
+  vira uma entrada em `perfis/<perfil>/campanhas.json` quando o post sair.
 - Inclua 2–3 "séries" recorrentes (ex.: "Mito ou Verdade às quartas") — séries
   facilitam produção e criam hábito no público.
 

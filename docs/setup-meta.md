@@ -17,12 +17,19 @@ Configurações → Tipo de conta e ferramentas → Mudar para conta profissiona
    (Configurações → Apps e sites).
 3. Gere o token com as permissões:
    - `instagram_business_basic`
-   - `instagram_business_manage_comments`
+   - `instagram_business_manage_comments` (responder/ocultar)
+   - `instagram_business_manage_messages` (DM para quem comentou — campanhas)
 4. Troque o token curto por um **token de longa duração** (60 dias) e anote a data
    de expiração. Renove antes de vencer:
    `GET https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=<TOKEN>`
 
 Para uso só na sua própria conta não é preciso App Review.
+
+Dica: a Meta tem um MCP oficial de *devtools* (`mcp.facebook.com/devtools`) para
+gerenciar apps, webhooks e App Review pelo Claude. Pode ajudar nesta etapa; ele
+não acessa posts nem comentários.
+
+Custo: a API do Instagram não cobra por chamada nem por mensagem.
 
 Repita os passos para cada conta (tecnologia e maternidade) — cada uma tem seu token.
 

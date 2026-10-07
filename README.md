@@ -21,9 +21,10 @@ perfis/<perfil>/.env      ───► skill instagram-comentarios ──► com
 | Template para criar um perfil novo | `perfis/_modelo/` |
 | Skill de conteúdo (pauta, carrossel, reels, stories, legenda) | `.claude/skills/instagram-conteudo/` |
 | Skill de comentários (triagem, rascunho, aprovação, publicação) | `.claude/skills/instagram-comentarios/` |
-| Graph API: buscar pendentes / publicar aprovados | `scripts/ig_comments.py` |
+| Graph API: buscar pendentes / publicar aprovados / DM para quem comentou | `scripts/ig_comments.py` |
+| Campanhas "comenta X que eu te mando o link" | `perfis/<perfil>/campanhas.json` |
 | Carrossel HTML → PNG 1080×1350 | `scripts/render_carrossel.py` + `templates/carrossel.html` |
-| Ferramentas open source para comentários | `docs/ferramentas-comentarios.md` |
+| Ferramentas avaliadas (comentários, DMs, tendências) | `docs/ferramentas-comentarios.md` |
 | Configurar token da Meta | `docs/setup-meta.md` |
 
 ## Começando
@@ -37,6 +38,7 @@ perfis/<perfil>/.env      ───► skill instagram-comentarios ──► com
    - "cria um carrossel de maternidade sobre <tema> e gera as imagens"
    - "roteiro de reels de 30s sobre <tema> pro tecnologia"
    - "responde os comentários da conta de maternidade dos últimos 3 dias"
+   - "manda o link do guia na DM de quem comentou GUIA no último reel do tecnologia"
 3. Para comentários, configure o token antes: `docs/setup-meta.md`.
 
 ### Dependências
