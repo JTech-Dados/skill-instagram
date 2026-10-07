@@ -1,6 +1,6 @@
 ---
 name: instagram-conteudo
-description: Cria conteúdo de Instagram para um dos perfis em perfis/ (tecnologia, maternidade) — pauta/calendário, carrossel, roteiro de Reels, Stories e legenda com hashtags. Use quando pedirem post, carrossel, reels, ideias de pauta, calendário editorial, legenda, gancho ou "conteúdo pro insta".
+description: Cria conteúdo de Instagram para um dos perfis em perfis/ (tecnologia, maternidade) — pauta/calendário com tendências, carrossel, roteiro de Reels, Stories, legenda com hashtags, otimização de bio/perfil, reaproveitamento de conteúdo entre formatos e revisão "tirar cara de IA". Use quando pedirem post, carrossel, reels, ideias de pauta, calendário editorial, legenda, gancho, bio, melhorar o perfil, reaproveitar/transformar um post, humanizar texto ou "conteúdo pro insta".
 ---
 
 # Criação de conteúdo para Instagram
@@ -19,8 +19,9 @@ voz, FAQ ou conteúdo de um perfil no outro. Abaixo, `<perfil>` é a pasta escol
 1. Leia `perfis/<perfil>/perfil.md`. Se houver campos `<...>` não preenchidos que afetem
    a peça pedida (público, voz, pilares, compliance), **pergunte antes** — no
    máximo 3 perguntas objetivas. Não invente o nicho.
-2. Leia `references/formatos.md` (specs de cada formato) e
-   `references/ganchos.md` (fórmulas de gancho).
+2. Leia `references/formatos.md` (specs de cada formato),
+   `references/ganchos.md` (fórmulas de gancho) e `references/humanizer.md`
+   (revisão anti-"cara de IA", obrigatória em todo texto entregue).
 3. Liste `conteudo/<perfil>/` para não repetir temas recentes.
 
 ## 1. Escolher o modo
@@ -32,6 +33,9 @@ voz, FAQ ou conteúdo de um perfil no outro. Abaixo, `<perfil>` é a pasta escol
 | "reels", "vídeo", "roteiro" | **Reels** | pasta da peça com `roteiro.md` + `legenda.md` |
 | "stories", "sequência" | **Stories** | pasta da peça com `roteiro.md` |
 | "legenda" para algo pronto | **Legenda** | `legenda.md` |
+| "bio", "melhorar o perfil", "destaques" | **Perfil** — siga `references/perfil-otimizacao.md` | `conteudo/<perfil>/perfil-otimizado-AAAA-MM-DD.md` |
+| "reaproveitar", "transformar em reels/stories" | **Reaproveitar** — siga `references/reaproveitamento.md` | subpastas na pasta da peça original |
+| "humaniza", "tá com cara de IA", texto colado para revisar | **Humanizer** — só `references/humanizer.md` | texto revisado + antes/depois dos trechos ajustados |
 
 Pasta da peça: `conteudo/<perfil>/AAAA-MM-DD-<slug>/` (copie a estrutura de `conteudo/_modelo/`).
 
@@ -48,7 +52,9 @@ Pasta da peça: `conteudo/<perfil>/AAAA-MM-DD-<slug>/` (copie a estrutura de `co
    Para gerar comentários, prefira pergunta fechada ou palavra-chave
    ("comenta GUIA que te mando") — isso alimenta a skill `instagram-comentarios`.
 5. **Legenda:** ver `formatos.md#legenda`.
-6. **Checklist final:** rode `references/checklist.md` e marque no `roteiro.md`.
+6. **Humanizer:** aplique `references/humanizer.md` em slides/roteiro e legenda.
+   Anote no `roteiro.md` quantos trechos mudaram e 2–3 exemplos antes → depois.
+7. **Checklist final:** rode `references/checklist.md` e marque no `roteiro.md`.
    Se algum item de compliance falhar, corrija antes de entregar.
 
 ## 3. Modo Pauta (calendário)

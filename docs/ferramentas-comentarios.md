@@ -10,6 +10,7 @@ e lemos o código; o resto é com base na documentação pública.
 | Responder/ocultar comentários com aprovação | `scripts/ig_comments.py` + skill `instagram-comentarios` | ~390 linhas, só stdlib, token só vai para a Meta. Dá para ler tudo |
 | **Comentou → recebe o link na DM** | `ig_comments.py campanha` + `perfis/<perfil>/campanhas.json` | Usa o recurso oficial de *private reply*. Nenhuma ferramenta de terceiros necessária |
 | Pesquisa de tendências para a pauta | `last30days-skill` (opcional) | Só lê conteúdo público, não toca na conta |
+| Humanizer, bio/perfil, reaproveitamento | Modos da skill `instagram-conteudo` | Ideias do instagram-skills, reescritas em PT-BR por perfil |
 | Caixa de entrada de DMs em equipe (futuro) | Chatwoot | Maduro, mas **não** trata comentários |
 
 ## Custo da API oficial
@@ -53,6 +54,25 @@ ScrapeCreators...). Confirme sempre no painel da Meta — política de preço po
 - **Veredito:** **não resolve "comentou → DM" nem responde comentários.** Serve
   para atender DMs em equipe (uma caixa por conta). Exige servidor (Docker,
   Postgres, Redis) ou plano pago na nuvem. Deixar para quando o volume de DMs justificar.
+
+### instagram-skills — [sergebulaev/instagram-skills](https://github.com/sergebulaev/instagram-skills)
+
+- **Maturidade:** ~300 estrelas, MIT, commit do dia anterior à revisão. Mesmo
+  autor do linkedin-skills.
+- **O que é:** 9 skills de **criação** (legenda, carrossel, calendário, hashtags,
+  extrair gancho, humanizer, otimizar perfil, ler o nicho, reaproveitar).
+  **Não responde comentários nem manda DM.**
+- **Código:** ~1.600 linhas de Python, fácil de auditar. Só fala com
+  `api.publora.com` (agendar/publicar), `api.apify.com` (dados públicos de
+  hashtags/perfis) e `api.pixfaro.com` (imagens) — e só se houver chave, todas
+  pagas e opcionais. Não usa login/senha do Instagram, sem telemetria. Só roda
+  comando externo se o usuário configurar `INSTAGRAM_SKILLS_CUSTOM_POSTER`.
+- **Ressalvas:** a aprovação antes de publicar é convenção escrita, não trava
+  no código; regras do humanizer pensadas para inglês; não conhece nossos perfis.
+- **Veredito:** seguro, mas **não instalado** para não competir com a skill
+  `instagram-conteudo`. Trouxemos as ideias, reescritas em português e por perfil:
+  `humanizer.md`, `perfil-otimizacao.md` e `reaproveitamento.md`
+  (em `.claude/skills/instagram-conteudo/references/`).
 
 ### MCPs
 

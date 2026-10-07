@@ -15,6 +15,7 @@
 - [ ] Nenhuma palavra da lista "Nunca dizer"
 - [ ] Sem jargão que o público não entende
 - [ ] Sem dado/estatística sem fonte (`[FONTE?]` marcado se faltar)
+- [ ] Humanizer aplicado (nenhum parágrafo/slide com 3+ marcas de IA de `humanizer.md`)
 
 ## Compliance
 - [ ] Regras do nicho respeitadas

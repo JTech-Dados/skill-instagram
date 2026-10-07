@@ -93,6 +93,10 @@ Passo a passo em `docs/setup-meta.md`. Repetir para **cada** conta.
 - [ ] 👤 Instalar a skill last30days na máquina de vocês (sem cookies do navegador)
       e testar uma pesquisa por nicho
 - [x] 🤖 Passo de tendências antes da pauta na skill `instagram-conteudo` (2026-10-07)
+- [x] 🤖 Avaliar sergebulaev/instagram-skills e trazer humanizer, otimização de
+      perfil e reaproveitamento para a skill de conteúdo (2026-10-07)
+- [ ] 👤🤖 Rodar o modo **Perfil** nas duas contas (bio, destaques, link) assim que
+      os `perfil.md` estiverem preenchidos
 - [ ] 👤🤖 Chatwoot para DMs em equipe — só quando o volume de DMs justificar
       (não trata comentários)
 - [ ] 🤖 SessionStart hook para instalar o Playwright automaticamente nas sessões na nuvem
