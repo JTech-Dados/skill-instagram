@@ -24,9 +24,12 @@ Configurações → Tipo de conta e ferramentas → Mudar para conta profissiona
 
 Para uso só na sua própria conta não é preciso App Review.
 
+Repita os passos para cada conta (tecnologia e maternidade) — cada uma tem seu token.
+
 ## 3. Variáveis de ambiente
 
-Copie `.env.example` para `.env` (já está no `.gitignore`) e preencha:
+Para cada perfil, copie `perfis/_modelo/.env.example` para `perfis/<perfil>/.env`
+(já está no `.gitignore`) e preencha:
 
 ```bash
 IG_ACCESS_TOKEN=...
@@ -35,15 +38,15 @@ IG_USERNAME=suaconta
 # IG_USER_ID=1784...               # obrigatório com Facebook Login
 ```
 
-Carregue antes de rodar: `set -a; source .env; set +a`.
+O script carrega esse arquivo sozinho quando recebe `--perfil <perfil>`.
 
 ## 4. Testar
 
 ```bash
-python3 scripts/ig_comments.py fetch --dias 7
+python3 scripts/ig_comments.py --perfil tecnologia fetch --dias 7
 ```
 
-Deve gerar `comentarios/pendentes-<data>.json`. Erro `190` = token inválido/expirado;
+Deve gerar `comentarios/tecnologia/pendentes-<data>.json`. Erro `190` = token inválido/expirado;
 erro `10`/`200` = permissão faltando.
 
 > **Nunca** commite o token. Se vazar, revogue no painel da Meta e gere outro.

@@ -3,6 +3,10 @@
 
 Sem dependências externas (só stdlib).
 
+Cada perfil (perfis/<perfil>/) tem seu próprio .env com o token da conta.
+Com --perfil, o script carrega perfis/<perfil>/.env e grava em comentarios/<perfil>/.
+Variáveis já definidas no ambiente têm prioridade sobre o .env.
+
 Variáveis de ambiente:
   IG_ACCESS_TOKEN  token da conta profissional (obrigatório)
   IG_USER_ID       id da conta IG (padrão: "me", funciona com Instagram Login)
@@ -13,8 +17,8 @@ Variáveis de ambiente:
   IG_API_VERSION   padrão v24.0
 
 Uso:
-  python3 scripts/ig_comments.py fetch [--dias 3] [--posts 15] [--saida ARQ]
-  python3 scripts/ig_comments.py publicar ARQ.json [--confirmar] [--intervalo 4]
+  python3 scripts/ig_comments.py --perfil tecnologia fetch [--dias 3] [--posts 15] [--saida ARQ]
+  python3 scripts/ig_comments.py --perfil tecnologia publicar ARQ.json [--confirmar] [--intervalo 4]
 """
 
 import argparse
@@ -29,6 +33,7 @@ import urllib.request
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
+PASTA_PERFIS = RAIZ / "perfis"
 PASTA_COMENTARIOS = RAIZ / "comentarios"
 
 
@@ -36,10 +41,25 @@ class ApiError(RuntimeError):
     pass
 
 
+def _carregar_perfil(perfil):
+    pasta = PASTA_PERFIS / perfil
+    if not pasta.is_dir():
+        existentes = sorted(d.name for d in PASTA_PERFIS.iterdir() if d.is_dir() and not d.name.startswith("_"))
+        sys.exit(f"Perfil '{perfil}' não existe. Perfis: {', '.join(existentes)}")
+    env = pasta / ".env"
+    if env.exists():
+        for linha in env.read_text(encoding="utf-8").splitlines():
+            linha = linha.strip()
+            if not linha or linha.startswith("#") or "=" not in linha:
+                continue
+            chave, valor = linha.split("=", 1)
+            os.environ.setdefault(chave.strip(), valor.strip().strip('"').strip("'"))
+
+
 def _config():
     token = os.environ.get("IG_ACCESS_TOKEN")
     if not token:
-        sys.exit("IG_ACCESS_TOKEN não definido. Veja docs/setup-meta.md.")
+        sys.exit("IG_ACCESS_TOKEN não definido (perfis/<perfil>/.env). Veja docs/setup-meta.md.")
     host = os.environ.get("IG_API_HOST", "graph.instagram.com")
     versao = os.environ.get("IG_API_VERSION", "v24.0")
     return {
@@ -146,8 +166,9 @@ def cmd_fetch(args):
             })
 
     pendentes.sort(key=lambda c: c["timestamp"])
+    pasta = PASTA_COMENTARIOS / args.perfil if args.perfil else PASTA_COMENTARIOS
     saida = Path(args.saida) if args.saida else (
-        PASTA_COMENTARIOS / f"pendentes-{dt.date.today().isoformat()}.json"
+        pasta / f"pendentes-{dt.date.today().isoformat()}.json"
     )
     saida.parent.mkdir(parents=True, exist_ok=True)
     saida.write_text(json.dumps(pendentes, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -214,12 +235,13 @@ def cmd_publicar(args):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--perfil", help="pasta em perfis/ (ex.: tecnologia, maternidade)")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     f = sub.add_parser("fetch", help="busca comentários sem resposta")
     f.add_argument("--dias", type=int, default=3, help="janela de comentários (padrão 3)")
     f.add_argument("--posts", type=int, default=15, help="nº de posts recentes (padrão 15)")
-    f.add_argument("--saida", help="arquivo de saída (padrão comentarios/pendentes-<data>.json)")
+    f.add_argument("--saida", help="arquivo de saída (padrão comentarios/<perfil>/pendentes-<data>.json)")
     f.set_defaults(func=cmd_fetch)
 
     pub = sub.add_parser("publicar", help="publica respostas aprovadas")
@@ -229,6 +251,8 @@ def main():
     pub.set_defaults(func=cmd_publicar)
 
     args = p.parse_args()
+    if args.perfil:
+        _carregar_perfil(args.perfil)
     try:
         args.func(args)
     except ApiError as e:

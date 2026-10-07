@@ -12,21 +12,27 @@ buscar  →  classificar + rascunhar  →  revisar/aprovar  →  publicar
 (script)        (você, Claude)           (usuário)         (script)
 ```
 
-## 0. Contexto
+## 0. Escolher o perfil (sempre primeiro)
 
-1. Leia `nicho/perfil.md` (voz, tom, emojis, "Nunca dizer", compliance).
-2. Leia `nicho/faq.md` (respostas aprovadas e situações que sempre escalam).
+Há mais de um perfil em `perfis/` (hoje: `tecnologia` e `maternidade`; ignore `_modelo`).
+Se o pedido não deixar claro para qual conta é, **pergunte**. Nunca misture
+voz, FAQ ou conteúdo de um perfil no outro. Abaixo, `<perfil>` é a pasta escolhida.
+
+## 0.1 Contexto
+
+1. Leia `perfis/<perfil>/perfil.md` (voz, tom, emojis, "Nunca dizer", compliance).
+2. Leia `perfis/<perfil>/faq.md` (respostas aprovadas e situações que sempre escalam).
 3. Leia `references/categorias.md` (como classificar e o que fazer em cada caso).
 
 ## 1. Buscar
 
 ```bash
-python3 scripts/ig_comments.py fetch --dias 3
+python3 scripts/ig_comments.py --perfil <perfil> fetch --dias 3
 ```
 
-- Precisa de `IG_ACCESS_TOKEN` no ambiente (ver `docs/setup-meta.md`). Se faltar,
+- Precisa de `IG_ACCESS_TOKEN` em `perfis/<perfil>/.env` (ver `docs/setup-meta.md`). Se faltar,
   avise o usuário e pare — não tente outra forma de acesso.
-- Gera `comentarios/pendentes-AAAA-MM-DD.json` só com comentários que ainda não
+- Gera `comentarios/<perfil>/pendentes-AAAA-MM-DD.json` só com comentários que ainda não
   têm resposta da própria conta.
 - Sem token, mas o usuário colou comentários no chat? Monte o mesmo JSON à mão
   (campos `comment_id` vazio) e siga — a etapa 4 fica manual.
@@ -43,7 +49,7 @@ Para cada comentário do arquivo de pendentes, preencha:
 | `motivo` | 1 linha justificando a ação |
 | `aprovado` | sempre `false` nesta etapa |
 
-Salve como `comentarios/rascunho-AAAA-MM-DD.json` (mesma estrutura dos
+Salve como `comentarios/<perfil>/rascunho-AAAA-MM-DD.json` (mesma estrutura dos
 pendentes + esses campos).
 
 Regras de escrita da resposta:
@@ -51,7 +57,7 @@ Regras de escrita da resposta:
 - Comece pelo nome/@ só quando soar natural; varie as aberturas — respostas
   idênticas em série parecem bot.
 - Use a legenda do post (`media_caption`) como contexto.
-- Fatos (preço, link, prazo, política) **só** de `faq.md`. Não sabe? `escalar`.
+- Fatos (preço, link, prazo, política) **só** do `faq.md` do perfil. Não sabe? `escalar`.
 - Responda no idioma do comentário.
 - Sempre que fizer sentido, devolva uma pergunta — conversa nos comentários
   aumenta o alcance do post.
@@ -68,8 +74,8 @@ Atualize o JSON: `aprovado: true` só nas linhas aprovadas.
 ## 4. Publicar
 
 ```bash
-python3 scripts/ig_comments.py publicar comentarios/rascunho-AAAA-MM-DD.json            # simulação
-python3 scripts/ig_comments.py publicar comentarios/rascunho-AAAA-MM-DD.json --confirmar
+python3 scripts/ig_comments.py --perfil <perfil> publicar comentarios/<perfil>/rascunho-AAAA-MM-DD.json              # simulação
+python3 scripts/ig_comments.py --perfil <perfil> publicar comentarios/<perfil>/rascunho-AAAA-MM-DD.json --confirmar
 ```
 
 - Rode primeiro sem `--confirmar` e mostre o que seria enviado.

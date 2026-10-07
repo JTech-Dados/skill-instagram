@@ -20,10 +20,11 @@ data do último commit e se usa a **API oficial** (Graph API) — ver "Evitar" n
 
 1. **Agora — semiautomático (este repo).** Rode a skill 1–2x por dia:
    `fetch → Claude rascunha → você aprova → publicar`. Sem servidor, sem custo fixo,
-   e você calibra a voz da marca e a `nicho/faq.md` com casos reais.
+   e você calibra a voz da marca e o `faq.md` de cada perfil com casos reais.
 2. **Depois — tempo real com aprovação parcial.** Suba o n8n (Docker), assine o
    webhook `comments` da conta e reaproveite as **mesmas regras**: cole
-   `nicho/perfil.md`, `nicho/faq.md` e `categorias.md` no prompt do nó de IA.
+   `perfis/<perfil>/perfil.md`, `faq.md` e `categorias.md` no prompt do nó de IA
+   (um workflow por conta).
    Automatize só `elogio` e `pergunta_faq`; o resto vai para uma fila (Sheets/Slack)
    para aprovação.
 3. **Opcional — MCP.** Se preferir conversar com o Claude ("responde os comentários

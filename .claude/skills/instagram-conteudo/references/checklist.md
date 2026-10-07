@@ -3,7 +3,7 @@
 ## Estratégia
 - [ ] Pilar e objetivo definidos e coerentes com o CTA
 - [ ] Ideia central cabe em 1 frase
-- [ ] Tema não repete nada em `conteudo/` dos últimos 30 dias
+- [ ] Tema não repete nada em `conteudo/<perfil>/` dos últimos 30 dias
 
 ## Gancho
 - [ ] Funciona sozinho, sem a legenda
